@@ -12,20 +12,16 @@ class _MyHomePageState extends State<MyHomePage> {
   TextEditingController txtCtrl = TextEditingController();
 
   void addItem() {
-    setState(
-      () {
-        todoList.add({'text': txtCtrl.text, 'isDrawn': false});
-        txtCtrl.clear();
-      },
-    );
+    setState(() {
+      todoList.add({'text': txtCtrl.text, 'isDrawn': false});
+      txtCtrl.clear();
+    });
   }
 
   void deleteItem(int index) {
-    setState(
-      () {
-        todoList.removeAt(index);
-      },
-    );
+    setState(() {
+      todoList.removeAt(index);
+    });
   }
 
   void toggleDrawn(int index) {
@@ -63,9 +59,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
                 onTap: () => toggleDrawn(index),
                 trailing: IconButton(
-                  onPressed: () {
-                    deleteItem(index);
-                  },
+                  onPressed: () => deleteItem(index),
                   icon: Icon(Icons.delete),
                 ),
               );
@@ -92,9 +86,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: FloatingActionButton(
-                      onPressed: () {
-                        addItem();
-                      },
+                      onPressed: addItem,
                       child: Icon(Icons.add),
                     ),
                   ),
