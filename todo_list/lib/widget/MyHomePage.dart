@@ -1,36 +1,33 @@
 import 'package:flutter/material.dart';
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key});
+class HomeScreen extends StatefulWidget {
+  const HomeScreen({super.key});
 
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
-  List<Map<String, dynamic>> todoList = [];
-  TextEditingController txtCtrl = TextEditingController();
+class _HomeScreenState extends State<HomeScreen> {
+  List todolist = [];
+  TextEditingController controller = TextEditingController();
+  List<bool> isChecked = [];
 
-  void addItem() {
-    setState(
-      () {
-        todoList.add({'text': txtCtrl.text, 'isDrawn': false});
-        txtCtrl.clear();
-      },
-    );
-  }
-
-  void deleteItem(int index) {
-    setState(
-      () {
-        todoList.removeAt(index);
-      },
-    );
-  }
-
-  void toggleDrawn(int index) {
+  void addtolist() {
     setState(() {
-      todoList[index]['isDrawn'] = !todoList[index]['isDrawn'];
+      todolist.add(controller.text);
+      isChecked.add(false);
+    });
+  }
+
+  void itemdelete(int index) {
+    setState(() {
+      todolist.removeAt(index);
+    });
+  }
+
+  void itemcheck(int index) {
+    setState(() {
+      isChecked[index] = !isChecked[index];
     });
   }
 
@@ -38,52 +35,63 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Color.fromARGB(255, 68, 162, 71),
-        title: Text("Todo List"),
+        title: const Text('Todo List'),
+        backgroundColor: Colors.cyan,
       ),
       body: Stack(
         children: [
-          ListView.builder(
-            padding: EdgeInsets.all(10),
-            shrinkWrap: true,
-            itemCount: todoList.length,
-            itemBuilder: (context, index) {
-              return ListTile(
-                contentPadding: EdgeInsets.all(10),
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10)),
-                tileColor: Color.fromARGB(225, 59, 209, 126),
-                title: Text(
-                  todoList[index]['text'],
-                  style: TextStyle(
-                    decoration: todoList[index]['isDrawn']
-                        ? TextDecoration.lineThrough
-                        : TextDecoration.none,
-                  ),
-                ),
-                onTap: () => toggleDrawn(index),
-                trailing: IconButton(
-                  onPressed: () {
-                    deleteItem(index);
+          Column(
+            children: [
+              Expanded(
+                child: ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: todolist.length,
+                  itemBuilder: (context, index) {
+                    return ListTile(
+                      contentPadding: const EdgeInsets.all(5),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10)),
+                      tileColor: Color.fromARGB(177, 189, 184, 184),
+                      leading: Checkbox(
+                        value: isChecked[index],
+                        onChanged: (bool? value) {
+                          setState(() {
+                            itemcheck(index);
+                          });
+                        },
+                      ),
+                      onTap: () {
+                        setState(() {
+                          itemcheck(index);
+                        });
+                      },
+                      title: Text(todolist[index]),
+                      trailing: IconButton(
+                        icon: const Icon(Icons.delete),
+                        onPressed: () {
+                          setState(() {
+                            itemdelete(index);
+                          });
+                        },
+                      ),
+                    );
                   },
-                  icon: Icon(Icons.delete),
                 ),
-              );
-            },
+              ),
+            ],
           ),
-          Align(
-            alignment: Alignment.bottomCenter,
-            child: Container(
-              color: Color.fromARGB(168, 230, 225, 225),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Align(
+              alignment: Alignment.bottomCenter,
               child: Row(
-                children: <Widget>[
+                children: [
                   Expanded(
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: TextField(
-                        controller: txtCtrl,
-                        decoration: InputDecoration(
-                          label: Text('Type here'),
+                        controller: controller,
+                        decoration: const InputDecoration(
                           border: OutlineInputBorder(),
                         ),
                       ),
@@ -93,9 +101,12 @@ class _MyHomePageState extends State<MyHomePage> {
                     padding: const EdgeInsets.all(8.0),
                     child: FloatingActionButton(
                       onPressed: () {
-                        addItem();
+                        setState(() {
+                          addtolist();
+                          controller.clear();
+                        });
                       },
-                      child: Icon(Icons.add),
+                      child: const Icon(Icons.add),
                     ),
                   ),
                 ],
