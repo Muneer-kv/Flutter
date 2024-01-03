@@ -14,8 +14,10 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void addtolist() {
     setState(() {
-      todolist.add(controller.text);
-      isChecked.add(false);
+      if (controller.text.isNotEmpty) {
+        todolist.add(controller.text);
+        isChecked.add(false);
+      }
     });
   }
 
@@ -36,49 +38,43 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Todo List'),
-        backgroundColor: Colors.cyan,
       ),
-      body: Stack(
+      body: Column(
         children: [
-          Column(
-            children: [
-              Expanded(
-                child: ListView.builder(
-                  shrinkWrap: true,
-                  itemCount: todolist.length,
-                  itemBuilder: (context, index) {
-                    return ListTile(
-                      contentPadding: const EdgeInsets.all(5),
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10)),
-                      tileColor: Color.fromARGB(177, 189, 184, 184),
-                      leading: Checkbox(
-                        value: isChecked[index],
-                        onChanged: (bool? value) {
-                          setState(() {
-                            itemcheck(index);
-                          });
-                        },
-                      ),
-                      onTap: () {
-                        setState(() {
-                          itemcheck(index);
-                        });
-                      },
-                      title: Text(todolist[index]),
-                      trailing: IconButton(
-                        icon: const Icon(Icons.delete),
-                        onPressed: () {
-                          setState(() {
-                            itemdelete(index);
-                          });
-                        },
-                      ),
-                    );
+          Expanded(
+            child: ListView.builder(
+              shrinkWrap: true,
+              itemCount: todolist.length,
+              itemBuilder: (context, index) {
+                return ListTile(
+                  contentPadding: const EdgeInsets.all(5),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10)),
+                  leading: Checkbox(
+                    value: isChecked[index],
+                    onChanged: (bool? value) {
+                      setState(() {
+                        itemcheck(index);
+                      });
+                    },
+                  ),
+                  onTap: () {
+                    setState(() {
+                      itemcheck(index);
+                    });
                   },
-                ),
-              ),
-            ],
+                  title: Text(todolist[index]),
+                  trailing: IconButton(
+                    icon: const Icon(Icons.delete),
+                    onPressed: () {
+                      setState(() {
+                        itemdelete(index);
+                      });
+                    },
+                  ),
+                );
+              },
+            ),
           ),
           Padding(
             padding: const EdgeInsets.all(8.0),
