@@ -1,7 +1,30 @@
+// ignore: file_names
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:login_1/firebase/authservice.dart';
 import 'package:login_1/widget/login.dart';
 
-class MySignin extends StatelessWidget {
+class MySignin extends StatefulWidget {
+  const MySignin({super.key});
+
+  @override
+  State<MySignin> createState() => _MySigninState();
+}
+
+class _MySigninState extends State<MySignin> {
+  final firebaseAuthServices firbaseservice = firebaseAuthServices();
+  TextEditingController usernamecontroller = TextEditingController();
+  TextEditingController emailcontroller = TextEditingController();
+  TextEditingController passwordcontroller = TextEditingController();
+
+  @override
+  void dispose() {
+    usernamecontroller.dispose();
+    emailcontroller.dispose();
+    passwordcontroller.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -11,7 +34,7 @@ class MySignin extends StatelessWidget {
           Row(
             children: [
               Padding(
-                padding: EdgeInsets.only(left: 50),
+                padding: const EdgeInsets.only(left: 50),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -30,11 +53,11 @@ class MySignin extends StatelessWidget {
                           fontWeight: FontWeight.bold,
                           color: Colors.yellow.shade800),
                     ),
-                    Text(
+                    const Text(
                       'Create your Account ',
                       style: TextStyle(fontWeight: FontWeight.bold),
                     ),
-                    Text(
+                    const Text(
                       'and Join us!',
                       style: TextStyle(fontWeight: FontWeight.bold),
                     ),
@@ -43,67 +66,86 @@ class MySignin extends StatelessWidget {
               ),
             ],
           ),
-          SizedBox(
+          const SizedBox(
             height: 50,
           ),
           Center(
-            child: Container(
-              child: Column(children: [
-                Padding(
-                  padding: EdgeInsets.only(left: 60, right: 60, top: 60),
-                  child: TextField(
-                    decoration: InputDecoration(labelText: 'First Name'),
-                  ),
+            child: Column(children: [
+              Padding(
+                padding: EdgeInsets.only(left: 60, right: 60, top: 60),
+                child: TextFormField(
+                  controller: usernamecontroller,
+                  decoration: InputDecoration(labelText: 'Username'),
                 ),
-                Padding(
-                  padding: EdgeInsets.only(left: 60, right: 60),
-                  child: TextField(
-                    decoration: InputDecoration(labelText: 'Last Name'),
-                  ),
+              ),
+              Padding(
+                padding: EdgeInsets.only(left: 60, right: 60),
+                child: TextFormField(
+                  controller: emailcontroller,
+                  decoration: InputDecoration(labelText: 'E-mail'),
                 ),
-                Padding(
-                  padding: EdgeInsets.only(left: 60, right: 60),
-                  child: TextField(
-                    decoration: InputDecoration(labelText: 'E-mail'),
-                  ),
+              ),
+              Padding(
+                padding: EdgeInsets.only(left: 60, right: 60),
+                child: TextFormField(
+                  controller: passwordcontroller,
+                  decoration: InputDecoration(labelText: 'Password'),
                 ),
-                Padding(
-                  padding: EdgeInsets.only(left: 60, right: 60),
-                  child: TextField(
-                    decoration: InputDecoration(labelText: 'Password'),
-                  ),
-                ),
-              ]),
-            ),
+              ),
+            ]),
           ),
-          SizedBox(
+          const SizedBox(
             height: 30,
           ),
-          Container(
+          SizedBox(
             width: 120,
             height: 50,
             child: FloatingActionButton(
-              onPressed: null,
-              child: Text('Sign In'),
+              onPressed: () {
+                signup();
+              },
               backgroundColor: Colors.yellow.shade800,
               foregroundColor: Colors.white,
+              child: const Text('Sign Up'),
             ),
           ),
-          SizedBox(
-            height: 140,
+          const SizedBox(
+            height: 120,
           ),
-          Container(
-            child: TextButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => MyLogin()),
-                  );
-                },
-                child: Text('Already have an account')),
-          ),
+          TextButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const MyLogin()),
+                );
+              },
+              child: const Text('Already have an account')),
         ]),
       ),
     );
+  }
+
+  void signup() async {
+    String username = usernamecontroller.text;
+    String email = emailcontroller.text;
+    String password = passwordcontroller.text;
+
+    User? user =
+        await firbaseservice.signupwithemailandpassword(email, password);
+
+    if (user != null) {
+      print('user is successfully created');
+      // Navigator.pushNamed(context, "/home");
+      Navigator.pushNamed(context, 'home');
+    } else {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text("Error"),
+          );
+        },
+      );
+    }
   }
 }
